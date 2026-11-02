@@ -1,0 +1,6 @@
+websocket-client
+mss
+pillow
+pynput
+certifi
+websockets

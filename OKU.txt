@@ -1,0 +1,86 @@
+================================================================
+  EHM UZAK DESTEK  -  Kurulum ve Kullanim
+================================================================
+
+NE YAPAR
+  Port acmadan / IP ugrasmadan, TeamViewer/AnyDesk mantiginda uzak
+  masaustu. Paylasan kisi rastgele bir KOD alir; baglanan kisi kodu
+  girip "Baglan" der; paylasan kisiye ONAY penceresi cikar; "Kabul
+  Et" deyince karsi taraf fare+klavyeyi kontrol eder.
+
+  Onemli: Onay ZORUNLUDUR. Karsi taraf kabul etmeden kimse baglanamaz.
+  Bu arac gozetimsiz/gizli degildir; karsidaki kisi ekranini bile bile
+  paylasir. Baskasinin bilgisi/onayi olmadan kullanmayin.
+
+NEDEN BIR "RELAY" GEREKIYOR
+  Hicbir port acmadan baglanti icin iki tarafin DISARI dogru baglandigi
+  ortak bir bulusma noktasi (relay) sart. TeamViewer de aynen boyle
+  calisir - kodlar onlarin sunucularinda eslesir. Son kullanicilar port
+  ACMAZ; sadece relay'in bir kez internette erisilebilir olmasi gerekir.
+
+--------------------------------------------------------------
+1) RELAY'I BIR KEZ KUR  (tek seferlik)
+--------------------------------------------------------------
+  Relay'i internetten erisilebilen bir yerde calistir:
+    - Bir VPS (ornek: Hetzner, DigitalOcean, Contabo) VEYA
+    - Ucretsiz PaaS (Railway, Render, Fly.io)
+
+  VPS ornegi (Linux):
+    pip install websockets
+    python relay.py            # 8765 portunu dinler
+  Sunucu guvenlik duvarinda 8765/tcp acik olsun.
+
+  Windows sunucuda: relay_baslat.bat cift tikla.
+
+  Relay adresini not et:  ws://SUNUCU_IP:8765
+
+  (Opsiyonel, onerilir) TLS icin relay onune Caddy/Nginx koyup
+  wss://alanadi koyabilirsin; o zaman relay.txt'ye wss://... yaz.
+
+--------------------------------------------------------------
+2) HER IKI BILGISAYARDA
+--------------------------------------------------------------
+  a) Bu klasordeki relay.txt dosyasini ac, icine kendi relay adresini yaz:
+        ws://SUNUCU_IP:8765
+     (tek satir, baska bir sey olmasin)
+
+  b) baslat.bat cift tikla.
+     Ilk calistirmada gerekli paketler otomatik kurulur
+     (websocket-client, mss, pillow, pynput).
+     Python yoksa once python.org'dan kur ("Add to PATH" isaretli).
+
+--------------------------------------------------------------
+3) KULLANIM
+--------------------------------------------------------------
+  DESTEK ALAN (ekranini paylasan):
+    - "Ekranimi Paylas" butonuna bas
+    - Ekranda 9 haneli KOD cikar -> bunu karsiya soyle
+
+  DESTEK VEREN (baglanan):
+    - "Kod" kutusuna kodu yaz, "Baglan"a bas
+    - Paylasan kisiye onay penceresi cikar; "Kabul Et" deyince
+      uzak ekran acilir, fare/klavye ile kontrol edebilirsin.
+
+--------------------------------------------------------------
+NOTLAR
+--------------------------------------------------------------
+  - "python.exe kapanmasin": baslat.bat uygulama kapansa bile
+    3 sn icinde yeniden acar. Tamamen durdurmak icin SIYAH pencereyi
+    kapat.
+  - Yonetici (admin) olarak calisan programlari kontrol etmek icin
+    baslat.bat'i sag tik > "Yonetici olarak calistir" ile ac.
+  - Windows'ta ilk calistirmada guvenlik duvari sorarsa izin ver
+    (giden baglanti icin; gelen porta gerek yok).
+  - Performans: cozunurluk 1280px'e olceklenir, ~8 fps, JPEG kalite 45.
+    remote_support.py icinde MAXW / FPS / quality degerlerini
+    degistirebilirsin.
+  - Tek oturum: bir koda ayni anda tek kisi baglanir.
+
+  Dosyalar:
+    relay.py            relay sunucusu (bulusma noktasi)
+    remote_support.py   tek uygulama (hem paylas hem baglan)
+    relay.txt           relay adresi (SEN DOLDUR)
+    baslat.bat          istemci calistirici
+    relay_baslat.bat    relay calistirici (sadece sunucuda)
+    requirements.txt    paket listesi
+================================================================
